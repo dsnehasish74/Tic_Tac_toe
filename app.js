@@ -1,7 +1,12 @@
+var count=0;
+$("#wrong-input").hide();
+$("#winner-x").hide();
+$("#winner-o").hide();
+$("#draw").hide();
 const game={
   value:"X",
   turn: "Player X turn",
-  game_state : play
+  state: 0,
 }
 function valu_intialise(){
   if(game.value==="X")
@@ -9,7 +14,7 @@ function valu_intialise(){
   else
     game.value="X";
 
-  if(game.turn==="Player X turn")
+  if(game.value==="O")
   game.turn="Player O turn";
   else
   game.turn="Player X turn"
@@ -23,7 +28,18 @@ function check_winner_row(x, y){
         if($( "td:eq("+j+")" ).text()===game.value)
         count1++;
       }
-      if(count1===3)console.log("Game winner "+game.turn);
+      if(count1===3){
+        game.state=1;
+        refresh();
+        if(game.value==="X"){
+          $("#welcome-text").hide("slow");
+          $("#winner-x").show("slow");
+        }
+        else{
+          $("#welcome-text").hide("slow");
+          $("#winner-o").show("slow");
+        }
+      }
 }
 function check_winner_col(x, y){
       var i=0,count1=0;
@@ -33,7 +49,18 @@ function check_winner_col(x, y){
         if($( "td:eq("+j+")" ).text()===game.value)
         count1++;
       }
-      if(count1===3)console.log("Game winner "+game.turn);
+      if(count1===3){
+        game.state=1;
+        refresh();
+        if(game.value==="X"){
+          $("#welcome-text").hide("slow");
+          $("#winner-x").show("slow");
+        }
+        else{
+          $("#welcome-text").hide("slow");
+          $("#winner-o").show("slow");
+        }
+      }
 }
 function check_winner_diagonal(x, y){
       var j,i=0,count1=0,count2=0;
@@ -44,17 +71,30 @@ function check_winner_diagonal(x, y){
       var k;
       i=2;
       for(k=i;k<7;k=k+2){
-        console.log(k);
         if($( "td:eq("+k+")" ).text()===game.value)
         count2++;
       }
-      if(count1===3 || count2===3)console.log("Game winner "+game.turn);
+      if(count1===3 || count2===3){
+        game.state=1;
+        refresh();
+        if(game.value==="X"){
+          $("#welcome-text").hide("slow");
+          $("#winner-x").show("slow");
+        }
+        else{
+          $("#welcome-text").hide("slow");
+          $("#winner-o").show("slow");
+        }
+      }
 }
 //function to check wheather the game is end or not
 function check(){
-  var count=0;
   count++;
-  if(count==9)console.log("Game Over");
+  if(count==9 && game.state===0){
+    refresh();
+    $("#welcome-text").hide("slow");
+    $("#draw").show("slow");
+  }
 }
 
 
@@ -62,12 +102,31 @@ function check(){
 function play(index,x,y){
   if(!$( "td:eq("+index+")" ).text()){
     $( "td:eq("+index+")" ).text(game.value);
-    $("#turn_header").text(game.turn);
     check_winner_row(x,y);
     check_winner_col(x,y);
     check_winner_diagonal(x,y)
     check();
     valu_intialise();
+    console.log(game.turn);
+    $("#turn_header").text(game.turn);
   }
-  else console.log("Wrong input");
+
 }
+function refresh(){
+  for(j=0;j<9;j++){
+    $( "td:eq("+j+")" ).text("");
+  }
+}
+
+$("#start-button").click(()=>{
+  $("#welcome-text").toggle();
+  $("#wrong-input").hide();
+  $("#winner-x").hide();
+  $("#winner-o").hide();
+  $("#draw").hide();
+  refresh();
+  count=0;
+  game.value="X";
+  game.turn="Player X turn";
+  game.state=0;
+});
